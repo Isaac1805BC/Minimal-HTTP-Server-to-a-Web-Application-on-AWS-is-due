@@ -1,0 +1,96 @@
+# ---------------------------------------------------------------------------
+# Maven / build output
+# ---------------------------------------------------------------------------
+target/
+build/
+out/
+dependency-reduced-pom.xml
+pom.xml.versionsBackup
+pom.xml.releaseBackup
+release.properties
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# ---------------------------------------------------------------------------
+# Compiled files
+# ---------------------------------------------------------------------------
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+hs_err_pid*
+replay_pid*
+
+# ---------------------------------------------------------------------------
+# IDE / editor metadata
+# ---------------------------------------------------------------------------
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.settings/
+.project
+.classpath
+.factorypath
+nbproject/
+nb-configuration.xml
+*.sublime-workspace
+*.sublime-project
+.metals/
+.bloop/
+
+# ---------------------------------------------------------------------------
+# Operating system metadata
+# ---------------------------------------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+desktop.ini
+*~
+.directory
+
+# ---------------------------------------------------------------------------
+# Logs and temporary files
+# ---------------------------------------------------------------------------
+*.log
+logs/
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+nohup.out
+
+# ---------------------------------------------------------------------------
+# Environment files, keys, credentials and local cloud configuration
+# NOTHING in this block may ever reach the repository.
+# ---------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+*.ppk
+id_rsa*
+id_ed25519*
+known_hosts
+.ssh/
+.aws/
+aws-credentials*
+credentials
+*.tfvars
+*.tfstate
+*.tfstate.*
+.terraform/
+secrets.*
