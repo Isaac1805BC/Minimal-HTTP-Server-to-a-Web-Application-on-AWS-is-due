@@ -17,43 +17,129 @@
       <p class="tagline">
         A socket-based Java server that answers one connection at a time. This page, its style
         sheet, its script and both images were delivered by that server as separate HTTP requests.
+        The buttons below call its hardcoded services asynchronously: the page never reloads.
       </p>
       <div class="badges">
         <span class="badge">GET only</span>
         <span class="badge">no threads</span>
-        <span class="badge">one connection at a time</span>
+        <span class="badge" id="healthBadge">checking health&hellip;</span>
       </div>
     </div>
   </header>
 
+  <main class="grid">
+
+    <!-- ------------------------------------------------------------------ -->
+    <section class="card">
+      <h2>Greeting</h2>
+      <p class="hint">
+        Sends a name to <code class="route">GET /app/hello?name=</code> and shows the JSON greeting
+        the server builds with it.
+      </p>
+      <form id="greetingForm" novalidate>
+        <label class="field" for="nameInput">
+          <span>Name</span>
+          <input type="text" id="nameInput" name="name" placeholder="Ada Lovelace"
+                 maxlength="64" autocomplete="off">
+        </label>
+        <button type="submit" id="greetingButton">Greet</button>
+      </form>
+      <p class="status-line" id="greetingStatus" role="status" aria-live="polite"></p>
+    </section>
+
+    <!-- ------------------------------------------------------------------ -->
+    <section class="card">
+      <h2>Square</h2>
+      <p class="hint">
+        Sends a number to <code class="route">GET /app/square?value=</code>. The multiplication
+        happens on the server, not in the browser.
+      </p>
+      <form id="squareForm" novalidate>
+        <label class="field" for="valueInput">
+          <span>Number</span>
+          <input type="number" id="valueInput" name="value" placeholder="7" step="any"
+                 autocomplete="off">
+        </label>
+        <button type="submit" id="squareButton">Square it</button>
+      </form>
+      <p class="status-line" id="squareStatus" role="status" aria-live="polite"></p>
+    </section>
+
+    <!-- ------------------------------------------------------------------ -->
+    <section class="card">
+      <h2>Server time</h2>
+      <p class="hint">
+        Asks <code class="route">GET /app/time</code>. The value comes from the clock of the machine
+        running the server, which is why it differs from the browser clock once deployed on EC2.
+      </p>
+      <form id="timeForm" novalidate>
+        <button type="submit" id="timeButton">Ask the server</button>
+        <button type="button" class="ghost" id="browserClockButton">Show browser clock</button>
+      </form>
+      <p class="status-line" id="timeStatus" role="status" aria-live="polite"></p>
+    </section>
+
+    <!-- ------------------------------------------------------------------ -->
+    <section class="card">
+      <h2>Sequential limit</h2>
+      <p class="hint">
+        Calls <code class="route">GET /app/slow?ms=5000</code>. Open this page in a second window,
+        start the slow call here and immediately ask for the time there: the second request waits.
+      </p>
+      <form id="slowForm" novalidate>
+        <button type="submit" id="slowButton">Run a slow request</button>
+      </form>
+      <p class="status-line" id="slowStatus" role="status" aria-live="polite"></p>
+    </section>
+
+  </main>
+
+  <!-- Success area: only this part of the page changes when a response arrives. -->
+  <section id="result" hidden aria-live="polite">
+    <h2>Result</h2>
+    <p class="result-value" id="resultValue"></p>
+    <p class="result-meta" id="resultMeta"></p>
+    <pre class="payload" id="resultPayload"></pre>
+  </section>
+
+  <!-- Error area: invalid input, HTTP error responses and network failures. -->
+  <section id="error" hidden role="alert">
+    <h2>Something went wrong</h2>
+    <p class="message" id="errorMessage"></p>
+    <p class="result-meta" id="errorMeta"></p>
+  </section>
+
   <figure class="shot">
     <img src="/images/cloud.jpg" alt="Illustration of a single server instance running in the cloud">
     <figcaption>
-      <code>/images/cloud.jpg</code> &mdash; a JPEG photograph read as bytes and announced as
+      <code>/images/cloud.jpg</code> &mdash; a JPEG read as bytes and announced as
       <code>image/jpeg</code>, exactly like <code>/images/logo.png</code> is announced as
       <code>image/png</code>.
     </figcaption>
   </figure>
 
   <section class="card" style="margin-top:26px">
-    <h2>What the browser just did</h2>
+    <h2>What the browser did to draw this page</h2>
     <p class="hint">
-      Opening this address produced more than one request. The document arrived first; while parsing
-      it the browser discovered the style sheet, the script and the images, and asked for each of
-      them separately. Because the server is sequential, those requests were served one after
-      another.
+      One address produced several requests. The document arrived first; while parsing it the
+      browser discovered the style sheet, the script and the images and asked for each of them
+      separately. Every service call below adds one more request.
     </p>
     <div class="table-scroll">
       <table>
         <thead>
-          <tr><th>Resource</th><th>Content type</th><th>Read as</th></tr>
+          <tr><th>Request</th><th>Content type</th><th>Kind</th></tr>
         </thead>
         <tbody>
-          <tr><td class="mono">/index.html</td><td class="mono">text/html; charset=utf-8</td><td>bytes</td></tr>
-          <tr><td class="mono">/css/styles.css</td><td class="mono">text/css; charset=utf-8</td><td>bytes</td></tr>
-          <tr><td class="mono">/js/app.js</td><td class="mono">text/javascript; charset=utf-8</td><td>bytes</td></tr>
-          <tr><td class="mono">/images/logo.png</td><td class="mono">image/png</td><td>bytes</td></tr>
-          <tr><td class="mono">/images/cloud.jpg</td><td class="mono">image/jpeg</td><td>bytes</td></tr>
+          <tr><td class="mono">GET /</td><td class="mono">text/html; charset=utf-8</td><td>static</td></tr>
+          <tr><td class="mono">GET /css/styles.css</td><td class="mono">text/css; charset=utf-8</td><td>static</td></tr>
+          <tr><td class="mono">GET /js/app.js</td><td class="mono">text/javascript; charset=utf-8</td><td>static</td></tr>
+          <tr><td class="mono">GET /images/logo.png</td><td class="mono">image/png</td><td>static</td></tr>
+          <tr><td class="mono">GET /images/cloud.jpg</td><td class="mono">image/jpeg</td><td>static</td></tr>
+          <tr><td class="mono">GET /app/hello?name=…</td><td class="mono">application/json; charset=utf-8</td><td>service</td></tr>
+          <tr><td class="mono">GET /app/square?value=…</td><td class="mono">application/json; charset=utf-8</td><td>service</td></tr>
+          <tr><td class="mono">GET /app/time</td><td class="mono">application/json; charset=utf-8</td><td>service</td></tr>
+          <tr><td class="mono">GET /app/health</td><td class="mono">application/json; charset=utf-8</td><td>service</td></tr>
         </tbody>
       </table>
     </div>
@@ -61,7 +147,7 @@
 
   <footer>
     Sequential web application &mdash; networking laboratory, part 2.
-    The asynchronous client and the hardcoded services are added next.
+    The browser is asynchronous; the server is not.
   </footer>
 
 </div>
