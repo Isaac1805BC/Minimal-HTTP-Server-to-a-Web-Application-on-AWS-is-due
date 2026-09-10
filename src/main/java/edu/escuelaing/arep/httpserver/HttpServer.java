@@ -22,15 +22,21 @@ public class HttpServer {
     private static final int CLIENT_TIMEOUT_MILLIS = 15_000;
 
     private final int configuredPort;
+    private final StaticResourceHandler staticResources;
     private ServerSocket serverSocket;
     private volatile boolean running;
 
     public HttpServer(int port) {
+        this(port, new StaticResourceHandler());
+    }
+
+    public HttpServer(int port, StaticResourceHandler staticResources) {
         this.configuredPort = port;
+        this.staticResources = staticResources;
     }
 
     public static void main(String[] args) throws IOException {
-        HttpServer server = new HttpServer(resolvePort(args));
+        HttpServer server = new HttpServer(resolvePort(args), new StaticResourceHandler(resolveStaticDir(args)));
         Runtime.getRuntime().addShutdownHook(new Thread(server::stop));
         server.bind();
         server.serve();
@@ -52,6 +58,20 @@ public class HttpServer {
             return Integer.parseInt(fromEnvironment.trim());
         }
         return DEFAULT_PORT;
+    }
+
+    /**
+     * Optional external public resources directory: {@code --static-dir=PATH} or
+     * the {@code STATIC_DIR} variable. When absent, the resources packaged
+     * inside the artifact are used.
+     */
+    static String resolveStaticDir(String[] args) {
+        for (String argument : args) {
+            if (argument.startsWith("--static-dir=")) {
+                return argument.substring("--static-dir=".length()).trim();
+            }
+        }
+        return System.getenv("STATIC_DIR");
     }
 
     /**
@@ -131,25 +151,16 @@ public class HttpServer {
     }
 
     /**
-     * Chooses the response for a request. At this stage of the laboratory it
-     * only answers the home page; static resources and the hardcoded services
-     * are added next.
+     * Chooses the response for a request. Anything that is not one of the
+     * hardcoded services is looked up in the public resources area.
      */
-    private HttpResponse route(HttpRequest request) {
+    HttpResponse route(HttpRequest request) {
         if (!"GET".equals(request.getMethod())) {
             return HttpResponse.jsonError(HttpStatus.METHOD_NOT_ALLOWED,
                             "This server only supports GET.")
                     .header("Allow", "GET");
         }
-        if ("/".equals(request.getPath())) {
-            return HttpResponse.html(HttpStatus.OK,
-                    "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"utf-8\">"
-                            + "<title>Sequential HTTP server</title></head><body>"
-                            + "<h1>Sequential HTTP server</h1>"
-                            + "<p>The listening socket stays open between requests.</p>"
-                            + "</body></html>");
-        }
-        return HttpResponse.jsonError(HttpStatus.NOT_FOUND, "Resource not found.");
+        return staticResources.handle(request.getPath());
     }
 
     /** Stops the loop and releases the listening socket. */

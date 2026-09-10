@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sequential HTTP Server</title>
+  <link rel="icon" href="/images/logo.png" type="image/png">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <img class="logo" src="/images/logo.png" alt="Laboratory logo: a listening socket">
+    <div>
+      <h1>Sequential HTTP Server</h1>
+      <p class="tagline">
+        A socket-based Java server that answers one connection at a time. This page, its style
+        sheet, its script and both images were delivered by that server as separate HTTP requests.
+      </p>
+      <div class="badges">
+        <span class="badge">GET only</span>
+        <span class="badge">no threads</span>
+        <span class="badge">one connection at a time</span>
+      </div>
+    </div>
+  </header>
+
+  <figure class="shot">
+    <img src="/images/cloud.jpg" alt="Illustration of a single server instance running in the cloud">
+    <figcaption>
+      <code>/images/cloud.jpg</code> &mdash; a JPEG photograph read as bytes and announced as
+      <code>image/jpeg</code>, exactly like <code>/images/logo.png</code> is announced as
+      <code>image/png</code>.
+    </figcaption>
+  </figure>
+
+  <section class="card" style="margin-top:26px">
+    <h2>What the browser just did</h2>
+    <p class="hint">
+      Opening this address produced more than one request. The document arrived first; while parsing
+      it the browser discovered the style sheet, the script and the images, and asked for each of
+      them separately. Because the server is sequential, those requests were served one after
+      another.
+    </p>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Resource</th><th>Content type</th><th>Read as</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="mono">/index.html</td><td class="mono">text/html; charset=utf-8</td><td>bytes</td></tr>
+          <tr><td class="mono">/css/styles.css</td><td class="mono">text/css; charset=utf-8</td><td>bytes</td></tr>
+          <tr><td class="mono">/js/app.js</td><td class="mono">text/javascript; charset=utf-8</td><td>bytes</td></tr>
+          <tr><td class="mono">/images/logo.png</td><td class="mono">image/png</td><td>bytes</td></tr>
+          <tr><td class="mono">/images/cloud.jpg</td><td class="mono">image/jpeg</td><td>bytes</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    Sequential web application &mdash; networking laboratory, part 2.
+    The asynchronous client and the hardcoded services are added next.
+  </footer>
+
+</div>
+<script src="/js/app.js"></script>
+</body>
+</html>
