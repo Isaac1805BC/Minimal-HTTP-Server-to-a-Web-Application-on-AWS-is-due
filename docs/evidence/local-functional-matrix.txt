@@ -1,0 +1,71 @@
+Functional evidence for http://localhost:8080
+Generated on 2026-09-09T19:32:08-05:00
+
+STATUS REQUEST                                CONTENT-TYPE                            BYTES  CHECK
+--------------------------------------------------------------------------------------------------------
+# Static resources
+200    GET /                                  text/html; charset=utf-8                 6710  ok
+200    GET /index.html                        text/html; charset=utf-8                 6710  ok
+200    GET /css/styles.css                    text/css; charset=utf-8                  6546  ok
+200    GET /js/app.js                         text/javascript; charset=utf-8           9217  ok
+200    GET /images/logo.png                   image/png                               11770  ok
+200    GET /images/cloud.jpg                  image/jpeg                              45766  ok
+
+# Hardcoded services -- valid input
+200    GET /app/hello?name=Ada%20Lovelace     application/json; charset=utf-8            77  ok
+200    GET /app/square?value=7                application/json; charset=utf-8            42  ok
+200    GET /app/square?value=-2.5             application/json; charset=utf-8            47  ok
+200    GET /app/time                          application/json; charset=utf-8           158  ok
+200    GET /app/health                        application/json; charset=utf-8            58  ok
+
+# Hardcoded services -- invalid input
+400    GET /app/hello                         application/json; charset=utf-8            82  ok
+400    GET /app/hello?name=                   application/json; charset=utf-8            86  ok
+400    GET /app/square                        application/json; charset=utf-8            83  ok
+400    GET /app/square?value=abc              application/json; charset=utf-8            88  ok
+400    GET /app/slow?ms=600000                application/json; charset=utf-8            96  ok
+404    GET /app/unknown-service               application/json; charset=utf-8            63  ok
+
+# Controlled errors
+404    GET /images/missing.png                text/html; charset=utf-8                  277  ok
+404    GET /not-here.html                     text/html; charset=utf-8                  272  ok
+405    POST /app/hello?name=Ada               application/json; charset=utf-8            86  ok
+405    PUT /index.html                        application/json; charset=utf-8            86  ok
+405    DELETE /app/health                     application/json; charset=utf-8            86  ok
+
+# Path traversal (curl normalizes the URL, so the raw path is sent by hand)
+403    GET /../../../../etc/passwd            application/json                            -  ok, rejected
+403    GET /%2e%2e/%2e%2e/etc/passwd          application/json                            -  ok, rejected
+403    GET /images/../../pom.xml              application/json                            -  ok, rejected
+
+# Repeated requests: fifteen consecutive operations in one server run
+15/15 succeeded against the same running process.
+
+# Sample payloads
+
+GET /app/hello?name=Ada
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Content-Length: 59
+{"service":"greeting","name":"Ada","message":"Hello, Ada!"}
+GET /app/square?value=12
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Content-Length: 44
+{"service":"square","value":12,"square":144}
+GET /app/time
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Content-Length: 158
+{"service":"server-time","iso8601":"2026-09-09T19:32:09.002272195-05:00","readable":"2026-09-09 19:32:09","zone":"America/Bogota","epochMillis":1789000329002}
+GET /app/health
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Content-Length: 58
+{"status":"UP","uptimeMillis":16806,"uptime":"0h 00m 16s"}
+GET /app/square?value=abc
+HTTP/1.1 400 Bad Request
+Content-Type: application/json; charset=utf-8
+Content-Length: 88
+{"status":400,"error":"Bad Request","message":"The 'value' parameter must be a number."}
+Done.

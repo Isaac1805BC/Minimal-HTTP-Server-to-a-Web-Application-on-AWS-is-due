@@ -1,0 +1,19 @@
+Sequential limitation demo against http://localhost:8080
+Generated on 2026-09-09T19:33:27-05:00
+
+19:33:27.314  client A  ->  GET /app/slow?ms=5000
+19:33:27.815  client B  ->  GET /app/time   (a request that costs nothing)
+19:33:32.321  client A  <-  answered after 5006 ms
+19:33:32.321  client B  <-  answered after 4504 ms
+
+Total wall time: 5009 ms
+
+Interpretation
+--------------
+Client B needed 4504 ms for a request the server answers in about one
+millisecond when it is idle. Nothing was slow about B: it simply waited in the
+accept queue while the single thread was still serving A.
+
+The browser stays responsive because fetch() is asynchronous on the client
+side, but asynchronous is not concurrent: the server still processes one
+connection at a time.

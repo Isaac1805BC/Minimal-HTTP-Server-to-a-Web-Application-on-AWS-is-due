@@ -13,7 +13,7 @@
 
 [Unit]
 Description=AREP sequential HTTP server (networking laboratory, part 2)
-Documentation=https://github.com/Isaac1805BC/Minimal-HTTP-Server-to-a-Web-Application-on-AWS
+Documentation=https://github.com/Isaac1805BC/Minimal-HTTP-Server-to-a-Web-Application-on-AWS-is-due
 After=network-online.target
 Wants=network-online.target
 
