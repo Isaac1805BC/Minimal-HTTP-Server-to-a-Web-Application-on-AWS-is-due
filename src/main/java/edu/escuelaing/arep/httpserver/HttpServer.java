@@ -151,8 +151,12 @@ public class HttpServer {
     }
 
     /**
-     * Chooses the response for a request. Anything that is not one of the
-     * hardcoded services is looked up in the public resources area.
+     * Chooses the response for a request.
+     *
+     * <p>The special URLs are recognised with direct, explicit comparisons.
+     * There is no routing table and no framework: the chain below <em>is</em>
+     * the routing mechanism, and everything it does not match is looked up in
+     * the public resources area.</p>
      */
     HttpResponse route(HttpRequest request) {
         if (!"GET".equals(request.getMethod())) {
@@ -160,7 +164,30 @@ public class HttpServer {
                             "This server only supports GET.")
                     .header("Allow", "GET");
         }
-        return staticResources.handle(request.getPath());
+
+        String path = request.getPath();
+
+        if ("/app/hello".equals(path)) {
+            return Services.hello(request);
+        }
+        if ("/app/square".equals(path)) {
+            return Services.square(request);
+        }
+        if ("/app/time".equals(path)) {
+            return Services.time();
+        }
+        if ("/app/health".equals(path)) {
+            return Services.health();
+        }
+        if ("/app/slow".equals(path)) {
+            return Services.slow(request);
+        }
+        if (path.startsWith(Services.PREFIX)) {
+            // Under /app/ there are only the services above; do not fall back to files.
+            return HttpResponse.jsonError(HttpStatus.NOT_FOUND, "Unknown service.");
+        }
+
+        return staticResources.handle(path);
     }
 
     /** Stops the loop and releases the listening socket. */
