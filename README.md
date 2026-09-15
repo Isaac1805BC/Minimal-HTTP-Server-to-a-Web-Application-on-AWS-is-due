@@ -418,11 +418,8 @@ button adds one `application/json` request without a page reload.
 
 ## 9. AWS deployment (one EC2 instance)
 
-The same artifact that was tested locally is deployed. Only the host and the network boundary
-change — not the architecture.
-
-> Use the account, region, image and instance type approved by the instructor. A running instance
-> can generate charges. **No key, address or credential belongs in this repository.**
+![EC2 instance running](docs/evidence/07-ec2-console.png)
+![Application served from the public address](docs/evidence/09-ec2-home.jpg)
 
 ### 9.1 Launch the instance
 
