@@ -9,6 +9,8 @@ Captured output lives here as text; screenshots go next to it as PNG files.
 | `local-functional-matrix.txt` | `./scripts/evidence.sh http://localhost:8080` |
 | `local-sequential-limit.txt` | `./scripts/sequential-demo.sh http://localhost:8080` |
 | `local-server-console.txt` | the server's own log during that session |
+| `07-ec2-console.png` | the EC2 console with the instance running and its name tag |
+| `09-ec2-home.jpg` | the page loaded from `http://<public address>:8080/` |
 
 ## To capture from EC2 (same commands, different base URL)
 
@@ -29,9 +31,7 @@ Name them exactly like this so the README links keep working.
 | `04-errors.png` | the error area after an invalid input, and the Network panel showing the `400` |
 | `05-not-found-405-traversal.png` | a `404` on a missing file, a `405` from a non-`GET` method and a `403` from a traversal attempt |
 | `06-sequential-timeline.png` | two browser windows or a Network timeline where the second request waits for the slow one |
-| `07-ec2-console.png` | the EC2 console with the instance running and its name tag |
 | `08-ec2-security-group.png` | the inbound rules: TCP 8080 for the application and TCP 22 restricted to your IP |
-| `09-ec2-home.png` | the same page loaded from `http://<public address>:8080/` |
 | `10-ec2-services.png` | the three services answering through the public address, `/app/time` showing the instance clock |
 | `11-ec2-systemd.png` | `systemctl status arep-httpserver` active after logging out and back in |
 | `12-ec2-terminated.png` | the instance in state `terminated` after the cleanup |
